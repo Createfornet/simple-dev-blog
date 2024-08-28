@@ -1,9 +1,10 @@
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Header from './components/Header';
 import Home from './pages/Home';
 import Join from './pages/Join';
 import Donate from './pages/Donate';
-import Header from './components/Header';
+import Panel from './pages/Panel';
 import Footer from './components/Footer';
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
           <Route path='/' index element={<Home />} />
           <Route path='/join' element={<Join />} />
           <Route path='/donate' element={<Donate />} />
+          <Route path='/panel' element={<Panel />} />
         </Routes>
       </main>
       <Footer />

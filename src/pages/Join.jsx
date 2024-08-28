@@ -8,9 +8,8 @@ export default function Join() {
   const [description, setDescription] = useState('');
 
   const [firstNameError, setFirstNameError] = useState(null);
-  const [lastNameError, setLastNameError] = useState(null);
+  const [descriptionError, setDescriptionError] = useState(null);
   const [emailError, setEmailError] = useState(null);
-  const [fileError, setFilError] = useState(null);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -19,23 +18,22 @@ export default function Join() {
       ? setFirstNameError(null)
       : setFirstNameError('first name should be filled');
 
-    lastName
-      ? setLastNameError(null)
-      : setLastNameError('last name should be filled');
-
     email.includes('@')
       ? setEmailError(null)
       : setEmailError('email should have @ sign');
 
-    file ? setFilError(null) : setFilError('file should be selected');
+    description
+      ? setDescriptionError(null)
+      : setDescriptionError('description should be filled');
 
-    if (!firstName || !lastName || !email.includes('@') || !file) return;
+    if (!firstName || !email.includes('@') || !description) return;
 
     const userData = {
       firstName,
       lastName,
       email,
       file,
+      description,
     };
 
     async function postUserData(api) {
@@ -70,6 +68,7 @@ export default function Join() {
           <img src='' alt='' />
           contact us
         </h2>
+
         <InputJoin
           state={firstName}
           setterFunction={setFirstName}
@@ -83,7 +82,6 @@ export default function Join() {
           setterFunction={setLastName}
           label='Surname'
           id='last-name'
-          errorState={lastNameError}
         />
 
         <InputJoin
@@ -101,7 +99,6 @@ export default function Join() {
           type='file'
           label='File'
           id='first-name'
-          errorState={fileError}
         />
 
         <InputJoin
@@ -109,6 +106,7 @@ export default function Join() {
           setterFunction={setDescription}
           label='Description'
           id='first-name'
+          errorState={descriptionError}
         />
 
         <input
