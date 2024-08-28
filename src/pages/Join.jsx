@@ -4,12 +4,13 @@ export default function Join() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [file, setFile] = useState('');
+  const [description, setDescription] = useState('');
 
   const [firstNameError, setFirstNameError] = useState(null);
   const [lastNameError, setLastNameError] = useState(null);
   const [emailError, setEmailError] = useState(null);
-  const [phoneNumberError, setPhoneNumberError] = useState(null);
+  const [fileError, setFilError] = useState(null);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -26,23 +27,15 @@ export default function Join() {
       ? setEmailError(null)
       : setEmailError('email should have @ sign');
 
-    phoneNumber.length === 11
-      ? setPhoneNumberError(null)
-      : setPhoneNumberError('phone number should have 11 character');
+    file ? setFilError(null) : setFilError('file should be selected');
 
-    if (
-      !firstName ||
-      !lastName ||
-      !email.includes('@') ||
-      phoneNumber.length !== 11
-    )
-      return;
+    if (!firstName || !lastName || !email.includes('@') || !file) return;
 
     const userData = {
       firstName,
       lastName,
       email,
-      phoneNumber,
+      file,
     };
 
     async function postUserData(api) {
@@ -67,16 +60,20 @@ export default function Join() {
   }
 
   return (
-    <section className='min-h-[calc(100vh-210px)] grid grid-col-1 items-center'>
+    <section className='min-h-[calc(100vh-310px)] grid grid-col-1 items-center relative'>
       <form
         action=''
         onSubmit={handleSubmit}
         className='grid grid-cols-1 gap-4'
       >
+        <h2 className='my-3 mx-2'>
+          <img src='' alt='' />
+          contact us
+        </h2>
         <InputJoin
           state={firstName}
           setterFunction={setFirstName}
-          label='first name'
+          label='Name'
           id='first-name'
           errorState={firstNameError}
         />
@@ -84,7 +81,7 @@ export default function Join() {
         <InputJoin
           state={lastName}
           setterFunction={setLastName}
-          label='last name'
+          label='Surname'
           id='last-name'
           errorState={lastNameError}
         />
@@ -93,24 +90,31 @@ export default function Join() {
           state={email}
           setterFunction={setEmail}
           type='email'
-          label='e-mail'
+          label='Email'
           id='user-email'
           errorState={emailError}
         />
 
         <InputJoin
-          state={phoneNumber}
-          setterFunction={setPhoneNumber}
-          type='tel'
-          label='first name'
+          state={file}
+          setterFunction={setFile}
+          type='file'
+          label='File'
           id='first-name'
-          errorState={phoneNumberError}
+          errorState={fileError}
+        />
+
+        <InputJoin
+          state={description}
+          setterFunction={setDescription}
+          label='Description'
+          id='first-name'
         />
 
         <input
           type='submit'
           value='submit'
-          className='block mx-auto border-2 border-yellow py-2 w-40 text-center rounded-full my-4'
+          className='text-black bg-yellow py-2 cursor-pointer rounded-xl my-4'
         />
       </form>
     </section>
@@ -123,19 +127,19 @@ function InputJoin({
   type = 'text',
   label,
   id,
-  errorState,
+  errorState = false,
 }) {
   return (
-    <div className='relative grid grid-cols-1'>
+    <div className='grid grid-cols-10 gap-2 mt-4'>
       <label
-        className='absolute top-0 left-4 -translate-y-1/2 bg-white dark:bg-black px-4 text-sm'
+        className='bg-white dark:bg-black text-sm col-span-3 p-1'
         htmlFor={id}
       >
         {label}
       </label>
 
       <input
-        className='bg-white dark:bg-black border-2 border-gray dark:border-light py-2 px-4 rounded-full text-xl'
+        className='bg-lightGray dark:bg-darkGray py-1 px-4 rounded-xl text-xl col-span-7'
         type={type}
         id={id}
         name='last name'
