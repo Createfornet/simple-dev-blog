@@ -5,7 +5,7 @@ import Dashboard from '../components/Dashboard';
 export default function App() {
   const [token, setToken] = useState(() => getCookie('token'));
 
-  if (token) return <Login setToken={setToken} />;
+  if (!token) return <Login setToken={setToken} />;
   return <Dashboard />;
 }
 

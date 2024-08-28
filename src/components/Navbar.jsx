@@ -1,4 +1,6 @@
-export default function Navbar({ className }) {
+import { Link } from 'react-router-dom';
+
+export default function Navbar({ className, setIsMenuOpen }) {
   return (
     <nav
       className={`absolute top-0 left-0 w-full flex flex-col p-4 pt-20
@@ -7,21 +9,15 @@ export default function Navbar({ className }) {
           ${className}`}
     >
       <ul className='flex flex-col py-8 items-center gap-4'>
-        <li>
-          <a href='#'>About</a>
-        </li>
+        <li>About</li>
 
-        <li>
-          <a href='#'>Our team</a>
-        </li>
+        <li>Our team</li>
 
-        <li>
-          <a href='#'>Projects</a>
-        </li>
+        <Link to='/panel' onClick={() => setIsMenuOpen(false)}>go to panel</Link>
 
-        <li>
-          <a href='#'>Contacts</a>
-        </li>
+        <li>Projects</li>
+
+        <li>Contacts</li>
       </ul>
     </nav>
   );

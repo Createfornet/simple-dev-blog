@@ -40,7 +40,7 @@ export default function Header() {
         <Hamburger onToggle={handleToggleMenu} duration={0.7} size={30} />
       </header>
 
-      <Navbar className={isMenuOpen ? 'translate-y-0' : '-translate-y-full'} />
+      <Navbar setIsMenuOpen={setIsMenuOpen} className={isMenuOpen ? 'translate-y-0' : '-translate-y-full'} />
 
       {isMenuOpen && <Layback />}
     </>
