@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
+
+const apiPostUserData = 'http://localhost:3000/api/v1/proposal';
 
 export default function Join() {
   const [firstName, setFirstName] = useState('');
@@ -7,54 +10,48 @@ export default function Join() {
   const [file, setFile] = useState('');
   const [description, setDescription] = useState('');
 
-  const [firstNameError, setFirstNameError] = useState(null);
-  const [descriptionError, setDescriptionError] = useState(null);
-  const [emailError, setEmailError] = useState(null);
+  const [firstNameError, setFirstNameError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [descriptionError, setDescriptionError] = useState(false);
+
+  async function postUserData(userData) {
+    try {
+      const response = await fetch(apiPostUserData, {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        },
+        body: JSON.stringify(userData),
+      });
+      if (!response.ok) throw new Error('request faild');
+
+      const data = await response.json();
+      if (data.message) throw new Error(data.message);
+    } catch (err) {
+      toast.error(err.message);
+    }
+  }
 
   function handleSubmit(e) {
     e.preventDefault();
 
-    firstName
-      ? setFirstNameError(null)
-      : setFirstNameError('first name should be filled');
+    // check inputs have value or not
+    if (!firstName || !email || !description) {
+      toast.error('inputs should be empty');
 
-    email.includes('@')
-      ? setEmailError(null)
-      : setEmailError('email should have @ sign');
-
-    description
-      ? setDescriptionError(null)
-      : setDescriptionError('description should be filled');
-
-    if (!firstName || !email.includes('@') || !description) return;
-
-    const userData = {
-      firstName,
-      lastName,
-      email,
-      file,
-      description,
-    };
-
-    async function postUserData(api) {
-      try {
-        const response = fetch(api, {
-          method: 'POST',
-          body: JSON.stringify(userData),
-          headers: {
-            'Content-type': 'application/json; charset=UTF-8',
-          },
-        });
-
-        const postedData = response.json();
-        console.log(postedData);
-      } catch (err) {
-        console.log(err);
-      }
+      setFirstNameError(firstName ? false : true);
+      setEmailError(email ? false : true);
+      setDescriptionError(description ? false : true);
+      return;
     }
 
-    // postUserData function need to invoke here with real api endpoint!
-    postUserData;
+    const userData = {
+      name: `${firstName} ${lastName ? lastName : ''}`,
+      email,
+      profession: description,
+    };
+
+    postUserData(userData);
   }
 
   return (
@@ -74,7 +71,7 @@ export default function Join() {
           setterFunction={setFirstName}
           label='Name'
           id='first-name'
-          errorState={firstNameError}
+          error={firstNameError}
         />
 
         <InputJoin
@@ -90,7 +87,7 @@ export default function Join() {
           type='email'
           label='Email'
           id='user-email'
-          errorState={emailError}
+          error={emailError}
         />
 
         <InputJoin
@@ -106,7 +103,7 @@ export default function Join() {
           setterFunction={setDescription}
           label='Description'
           id='first-name'
-          errorState={descriptionError}
+          error={descriptionError}
         />
 
         <input
@@ -115,6 +112,8 @@ export default function Join() {
           className='text-black bg-yellow py-2 cursor-pointer rounded-xl my-4'
         />
       </form>
+
+      <Toaster />
     </section>
   );
 }
@@ -125,7 +124,7 @@ function InputJoin({
   type = 'text',
   label,
   id,
-  errorState = false,
+  error = false,
 }) {
   return (
     <div className='grid grid-cols-10 gap-2 mt-4'>
@@ -134,6 +133,7 @@ function InputJoin({
         htmlFor={id}
       >
         {label}
+        {error && <span className='text-[#F00]'> !</span>}
       </label>
 
       <input
@@ -144,12 +144,6 @@ function InputJoin({
         value={state}
         onChange={(e) => setterFunction(e.target.value)}
       />
-
-      {errorState && <ErrorText>{errorState}</ErrorText>}
     </div>
   );
-}
-
-function ErrorText({ children }) {
-  return <p className='text-[#ff0000]'>{children}</p>;
 }

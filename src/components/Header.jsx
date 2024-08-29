@@ -37,7 +37,7 @@ export default function Header() {
           Code Club
         </Link>
 
-        <Hamburger onToggle={handleToggleMenu} duration={0.7} size={30} />
+        <Hamburger toggled={isMenuOpen} onToggle={handleToggleMenu} duration={0.7} size={30} />
       </header>
 
       <Navbar setIsMenuOpen={setIsMenuOpen} className={isMenuOpen ? 'translate-y-0' : '-translate-y-full'} />

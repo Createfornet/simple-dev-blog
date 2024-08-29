@@ -1,31 +1,41 @@
 import { useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 
-const API_ENDPOINT = 'http://localhost:8080/panel/login';
+const apiPosetCredentials = 'http://localhost:3000/login';
 
 export default function Login({ setToken }) {
-  const [username, setUserName] = useState();
-  const [password, setPassword] = useState();
+  const [username, setUserName] = useState('');
+  const [password, setPassword] = useState('');
+
+  const [usernameError, setUserNameError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
 
   async function loginUser(credentials) {
-    try {
-      const respons = await fetch(API_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      });
-      const data = await respons.json();
-      return data;
-    } catch (err) {
-      console.log(err, '---');
-    }
+    const response = await fetch(apiPosetCredentials, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(credentials),
+    });
+    if (!response.ok) throw new Error('request faild');
+
+    const data = await response.json();
+    if (data.status === 'fail') throw new Error(data.message);
+    if (data.status === 'success') return data.token;
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
     try {
-      if (!username || !password) return;
+      // check inputs have value or not
+      if (!username || !password) {
+        toast.error('inputs should be empty');
+
+        setUserNameError(username ? false : true);
+        setPasswordError(password ? false : true);
+        return;
+      }
 
       const credentials = {
         username,
@@ -34,15 +44,17 @@ export default function Login({ setToken }) {
 
       const token = await loginUser(credentials);
 
-      setToken(token);
-      setCookie('token', token, 14);
+      if (token) {
+        setCookie('token', token, 14);
+        setToken(token);
+      }
     } catch (err) {
-      console.log(err, '---');
+      toast.error(err.message);
     }
   }
 
   return (
-    <div className='login-wrapper'>
+    <section className='login-wrapper'>
       <h1>Please Log In</h1>
 
       <form className='grid pt-20' onSubmit={handleSubmit}>
@@ -51,6 +63,7 @@ export default function Login({ setToken }) {
           setterFunction={setUserName}
           label='user name'
           id='user_name'
+          error={usernameError}
         />
 
         <Input
@@ -59,6 +72,7 @@ export default function Login({ setToken }) {
           type='password'
           label='password'
           id='password'
+          error={passwordError}
         />
 
         <button
@@ -68,11 +82,12 @@ export default function Login({ setToken }) {
           Submit
         </button>
       </form>
-    </div>
+      <Toaster />
+    </section>
   );
 }
 
-function Input({ state, setterFunction, type = 'text', label, id }) {
+function Input({ state, setterFunction, type = 'text', label, id, error }) {
   return (
     <div className='grid grid-cols-10 gap-2 mt-4'>
       <label
@@ -80,6 +95,7 @@ function Input({ state, setterFunction, type = 'text', label, id }) {
         htmlFor={id}
       >
         {label}
+        {error && <span className='text-[#F00]'> !</span>}
       </label>
 
       <input
